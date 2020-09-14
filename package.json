@@ -1,0 +1,14 @@
+{
+  "name": "shortcut",
+  "version": "1.0.0",
+  "description": "Single place to quickly start an app",
+  "main": "index.js",
+  "author": "Denys Periel <denys.p@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "electron": "^10.1.1"
+  }
+}
