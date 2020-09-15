@@ -1,28 +1,45 @@
 const { app, globalShortcut } = require('electron')
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process')
+const fs = require('fs')
+const path = require('path')
+
+const userDataPath = app.getPath('userData')
+console.log(userDataPath);
+const pathToCommands = path.join(userDataPath, 'commands.json')
+
+if (!fs.existsSync(pathToCommands)) {
+    const defaultLinks = {
+        "i": "open https://github.com/dperyel/shortcuts/blob/master/README.md",
+    };
+    fs.writeFileSync(pathToCommands, JSON.stringify(defaultLinks), { recursive: true, })
+}
+
+const commandsRow = fs.readFileSync(pathToCommands)
+const commands = JSON.parse(commandsRow)
 
 let waitingForSecondCommandTimer;
-
-const eventsMap = new Map();
-eventsMap.set('t', 'open -a "Firefox" "https://translate.google.com/\#view\=home\&op\=translate\&sl\=en\&tl\=ru"')
 
 app.whenReady().then(() => {
     console.log("Now you can press Command+D then a number of preset")
 
-    const ret = globalShortcut.register('Command+D+D', () => {
+    const ret = globalShortcut.register('Command+D', () => {
         console.log('Command+D is pressed')
 
-        eventsMap.forEach((command, shortcut) => {
+        iterateCommands((shortcut, commands) => {
             const tmpEvent = globalShortcut.register(shortcut, () => {
-                exec(command)
                 globalShortcut.unregister(shortcut)
+                if (Array.isArray(commands)) {
+                    commands.forEach(command => execSync(command))
+                } else {
+                    exec(commands)
+                }
             })
 
             if (tmpEvent) console.log(`${shortcut} is registered`)
-        })
+        }) 
 
         waitingForSecondCommandTimer = setTimeout(() => {
-            eventsMap.forEach((command, shortcut) => {
+            iterateCommands(shortcut => {
                 globalShortcut.unregister(shortcut)
                 console.log(`Unregistered shortcut ${shortcut}`)
             })
@@ -42,3 +59,9 @@ app.on('will-quit', () => {
     globalShortcut.unregister('Command+D')
     globalShortcut.unregisterAll()
 })
+
+function iterateCommands(fn) {
+    for (const command of Object.keys(commands)) {
+        fn(command, commands[command]);
+    }
+}

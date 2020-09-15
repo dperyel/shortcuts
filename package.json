@@ -1,14 +1,23 @@
 {
-  "name": "shortcut",
-  "version": "1.0.0",
+  "name": "shortcuts-combination",
+  "version": "0.0.1",
   "description": "Single place to quickly start an app",
   "main": "index.js",
-  "author": "Denys Periel <denys.p@gmail.com>",
+  "author": "Denys Periel <denysongithub@gmail.com>",
   "license": "MIT",
-  "scripts": {
-    "start": "electron ."
+  "build": {
+    "appId": "com.lasttimei.${name}",
+    "artifactName": "${productName}-${version}.${ext}",
+    "mac": {}
   },
-  "dependencies": {
-    "electron": "^10.1.1"
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "devDependencies": {
+    "electron": "^10.1.1",
+    "electron-builder": "^22.8.1"
   }
 }
