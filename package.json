@@ -6,7 +6,7 @@
   "author": "Denys Periel <denysongithub@gmail.com>",
   "license": "MIT",
   "build": {
-    "appId": "com.lasttimei.${name}",
+    "appId": "net.lasttimei.${name}",
     "artifactName": "${productName}-${version}.${ext}",
     "mac": {}
   },
